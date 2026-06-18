@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Правила — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="card form-card wide" style="margin:0 auto;">
+  <h1 class="page-title">Правила</h1>
+  <div style="white-space:pre-wrap;">{{ settings.rules_text }}</div>
+  {% if user.is_staff %}
+    <a href="{% url 'panel:rules_edit' %}" class="btn btn-outline mt-2">Редактировать правила</a>
+  {% endif %}
+</div>
+{% endblock %}

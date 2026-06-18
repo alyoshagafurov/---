@@ -1,0 +1,23 @@
+{% extends 'panel/base.html' %}
+
+{% block panel %}
+<h2 class="section-title">Пользователи ({{ page_obj.paginator.count }})</h2>
+<div class="card" style="overflow-x:auto;">
+  <table class="table">
+    <thead>
+      <tr><th></th><th>Имя</th><th>Регистрация</th><th>Был онлайн</th></tr>
+    </thead>
+    <tbody>
+      {% for u in page_obj %}
+        <tr>
+          <td><a href="{% url 'accounts:user_profile' u.pk %}">{% include 'partials/avatar.html' with u=u size='sm' %}</a></td>
+          <td><a href="{% url 'accounts:user_profile' u.pk %}">{{ u.display_name }}</a></td>
+          <td>{{ u.date_joined|date:'d/m/y H:i' }}</td>
+          <td>{% if u.last_seen %}{{ u.last_seen|date:'d/m/y H:i' }}{% else %}—{% endif %}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include 'partials/pagination.html' %}
+{% endblock %}

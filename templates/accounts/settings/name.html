@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Изменить имя — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<form method="post" class="form-card card" novalidate>
+  {% csrf_token %}
+  <h1 class="page-title text-center">Изменить имя на сайте</h1>
+
+  {% if saved %}<div class="alert alert-success">Имя на сайте изменено.</div>{% endif %}
+
+  <div class="form-row">
+    <label>Имя на сайте</label>
+    <div class="form-hint">Минимум 1 символ. Максимум 15. Только буквы и цифры.</div>
+    <input type="text" name="display_name" class="form-control" maxlength="15"
+           value="{{ form.display_name.value|default:user.display_name }}">
+    {% if form.display_name.errors %}<div class="field-error">{{ form.display_name.errors.0 }}</div>{% endif %}
+  </div>
+
+  <button type="submit" class="btn btn-primary btn-block">Сохранить</button>
+  <a href="{% url 'accounts:settings' %}" class="btn btn-outline btn-block mt-1">Назад</a>
+</form>
+{% endblock %}

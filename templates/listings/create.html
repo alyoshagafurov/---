@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Добавить объявление — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data" id="listing-form" class="form-card wide card" novalidate>
+  {% csrf_token %}
+  <h1 class="page-title text-center">Добавить объявление</h1>
+
+  <div class="form-row">
+    <label>Выберите Категорию</label>
+    {{ form.category }}
+    {% if form.category.errors %}<div class="field-error">{{ form.category.errors.0 }}</div>{% endif %}
+  </div>
+
+  <div data-needs-category>
+    <div class="form-row">
+      <label>Название</label>
+      <div class="form-hint">Минимум 1 символ. Максимум 35 символов.</div>
+      <input type="text" name="title" class="form-control" maxlength="35" value="{{ form.title.value|default:'' }}">
+      {% if form.title.errors %}<div class="field-error">{{ form.title.errors.0 }}</div>{% endif %}
+    </div>
+
+    <div class="form-row">
+      <label>Описание</label>
+      <textarea name="description" class="form-control">{{ form.description.value|default:'' }}</textarea>
+      {% if form.description.errors %}<div class="field-error">{{ form.description.errors.0 }}</div>{% endif %}
+    </div>
+
+    <div class="form-row photo-uploader">
+      <label>Фото</label>
+      <div class="form-hint">Минимум 1 фото. Максимум 15. Размер не менее 30 Кбайт. Максимум 3 Мб.</div>
+      <label class="file-box" for="id_photos">Добавить</label>
+      <input type="file" name="photos" id="id_photos" accept="image/*" multiple
+             data-preview="photo-preview" style="display:none;">
+      <div class="preview-grid" id="photo-preview"></div>
+      {% if photo_error %}<div class="field-error">{{ photo_error }}</div>{% endif %}
+    </div>
+
+    <div class="form-row">
+      <label class="checkbox-row">
+        <input type="checkbox" name="terms">
+        <span>С правилами ознакомлен (<a href="{% url 'core:rules' %}" target="_blank">Правила</a>)</span>
+      </label>
+      {% if terms_error %}<div class="field-error">{{ terms_error }}</div>{% endif %}
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-block">Добавить объявление</button>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Аватарка — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data" class="form-card card photo-uploader" novalidate>
+  {% csrf_token %}
+  <h1 class="page-title text-center">Аватарка</h1>
+
+  {% if saved %}<div class="alert alert-success">Аватарка сохранена.</div>{% endif %}
+
+  <div class="text-center mb-2">{% include 'partials/avatar.html' with u=user size='lg' %}</div>
+
+  <div class="form-row" style="display:flex;gap:14px;align-items:center;">
+    <label class="file-box" for="id_avatar" style="flex:1;">Выбрать</label>
+    <div class="form-hint" style="margin:0;">Минимальный размер 30 Кбайт.<br>Максимальный 3 Мб.</div>
+  </div>
+  <input type="file" name="avatar" id="id_avatar" accept="image/*" data-preview="avatar-preview" style="display:none;">
+  <div class="preview-grid" id="avatar-preview"></div>
+  {% if form.avatar.errors %}<div class="field-error">{{ form.avatar.errors.0 }}</div>{% endif %}
+
+  <button type="submit" class="btn btn-primary btn-block mt-2">Сохранить</button>
+  <a href="{% url 'accounts:settings' %}" class="btn btn-outline btn-block mt-1">Назад</a>
+</form>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}{{ category.name }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<h1 class="page-title">{{ category.name }}</h1>
+
+{% if page_obj.object_list %}
+  <div class="grid">
+    {% for listing in page_obj %}
+      {% include 'partials/listing_card.html' with listing=listing %}
+    {% endfor %}
+  </div>
+  {% include 'partials/pagination.html' %}
+{% else %}
+  <div class="empty-state">В этой категории пока нет публикаций.</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,1 @@
+{% if u.avatar %}<img src="{{ u.avatar.url }}" class="avatar {{ size }}" alt="{{ u.display_name }}">{% else %}<span class="avatar {{ size }} avatar-placeholder">{{ u.display_name|slice:":1"|upper }}</span>{% endif %}

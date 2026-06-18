@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Редактировать — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data" class="form-card wide card" novalidate>
+  {% csrf_token %}
+  <h1 class="page-title text-center">Редактировать объявление</h1>
+
+  {% if saved %}<div class="alert alert-success">Объявление успешно отредактировано.</div>{% endif %}
+
+  <div class="form-row">
+    <label>Название</label>
+    <div class="form-hint">Минимум 1 символ. Максимум 35 символов.</div>
+    <input type="text" name="title" class="form-control" maxlength="35"
+           value="{{ form.title.value|default:listing.title }}">
+    {% if form.title.errors %}<div class="field-error">{{ form.title.errors.0 }}</div>{% endif %}
+  </div>
+
+  <div class="form-row">
+    <label>Описание</label>
+    <textarea name="description" class="form-control">{{ form.description.value|default:listing.description }}</textarea>
+    {% if form.description.errors %}<div class="field-error">{{ form.description.errors.0 }}</div>{% endif %}
+  </div>
+
+  {% if photos %}
+  <div class="form-row">
+    <label>Текущие фото</label>
+    <div class="form-hint">Отметьте фото, которые нужно удалить.</div>
+    <div class="preview-grid">
+      {% for photo in photos %}
+        <label class="pv" style="cursor:pointer;">
+          <img src="{{ photo.image.url }}" alt="">
+          <span style="display:block;text-align:center;font-size:12px;">
+            <input type="checkbox" name="remove_photos" value="{{ photo.pk }}"> удалить
+          </span>
+        </label>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="form-row photo-uploader">
+    <label>Добавить фото</label>
+    <div class="form-hint">Размер не менее 30 Кбайт. Максимум 3 Мб. Всего не более 15.</div>
+    <label class="file-box" for="id_photos">Добавить</label>
+    <input type="file" name="photos" id="id_photos" accept="image/*" multiple
+           data-preview="photo-preview" style="display:none;">
+    <div class="preview-grid" id="photo-preview"></div>
+    {% if photo_error %}<div class="field-error">{{ photo_error }}</div>{% endif %}
+  </div>
+
+  <div class="modal-actions">
+    <a href="{% url 'listings:detail' listing.pk %}" class="btn btn-outline">Отмена</a>
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+  </div>
+</form>
+{% endblock %}

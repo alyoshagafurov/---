@@ -1,0 +1,15 @@
+<a href="{% url 'listings:detail' listing.pk %}" class="listing-card">
+  {% with cover=listing.cover %}
+    {% if cover %}
+      <img src="{{ cover.image.url }}" class="thumb" alt="{{ listing.title }}">
+    {% else %}
+      <div class="thumb empty">Нет фото</div>
+    {% endif %}
+  {% endwith %}
+  <div class="body">
+    <div class="title">{{ listing.title }}</div>
+    {% if show_status %}
+      <span class="status-tag status-{{ listing.status }}">{{ listing.get_status_display }}</span>
+    {% endif %}
+  </div>
+</a>

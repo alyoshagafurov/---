@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Вход — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<form method="post" class="form-card card" data-enable-when-filled novalidate>
+  {% csrf_token %}
+  <h1 class="page-title text-center">Вход</h1>
+
+  {% if form.non_field_errors %}
+    <div class="field-error blue mb-2">{{ form.non_field_errors.0 }}</div>
+  {% endif %}
+
+  <div class="form-row">
+    <label>Email</label>
+    <input type="text" name="email" class="form-control" value="{{ form.email.value|default:'' }}" autofocus>
+  </div>
+
+  <div class="form-row">
+    <label>Пароль</label>
+    <input type="password" name="password" class="form-control">
+    <div class="mt-1"><a href="{% url 'accounts:password_reset' %}">Забыли пароль?</a></div>
+  </div>
+
+  <button type="submit" class="btn btn-primary btn-block disabled" disabled>Войти</button>
+
+  <p class="text-center mt-2 muted">
+    Ещё не зарегистрированы? <a href="{% url 'accounts:register' %}">Зарегистрироваться</a>
+  </p>
+</form>
+{% endblock %}

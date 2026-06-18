@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}{{ profile.display_name }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="card profile-head">
+  {% include 'partials/avatar.html' with u=profile size='lg' %}
+  <div class="meta">
+    <div class="profile-name">{{ profile.display_name }}</div>
+
+    {% if can_see_reg_date %}
+      <div class="muted">На сайте с: {{ profile.date_joined|date:'d/m/Y' }}</div>
+    {% endif %}
+
+    {% if is_admin_view %}
+      <div class="muted">Ip: {{ profile.last_login_ip|default:'—' }}</div>
+    {% endif %}
+
+    {% if profile.is_online %}
+      <div><span class="status-online">Online</span></div>
+    {% else %}
+      <div class="status-offline">
+        Offline
+        {% if is_admin_view and profile.last_seen %}
+          · Был онлайн: {{ profile.last_seen|date:'d/m/Y. H:i' }}
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if not is_owner %}
+      {% if user.is_authenticated %}
+        <a href="{% url 'messaging:start_with' profile.pk %}" class="btn btn-primary btn-sm mt-1">Отправить сообщение</a>
+      {% else %}
+        <button type="button" class="btn btn-primary btn-sm mt-1" data-modal-open="auth-modal">Отправить сообщение</button>
+      {% endif %}
+    {% endif %}
+  </div>
+</div>
+
+<div class="tabs">
+  <a href="?tab=published" class="{% if tab == 'published' %}active{% endif %}">Объявления</a>
+  {% if can_see_all %}
+    <a href="?tab=queue" class="{% if tab == 'queue' %}active{% endif %}">Очередь</a>
+    <a href="?tab=deleted" class="{% if tab == 'deleted' %}active{% endif %}">Удалённые</a>
+  {% endif %}
+</div>
+
+{% if page_obj.object_list %}
+  <div class="grid">
+    {% for listing in page_obj %}
+      {% include 'partials/listing_card.html' with listing=listing show_status=can_see_all %}
+    {% endfor %}
+  </div>
+  {% include 'partials/pagination.html' %}
+{% else %}
+  <div class="empty-state">Публикаций нет.</div>
+{% endif %}
+{% endblock %}

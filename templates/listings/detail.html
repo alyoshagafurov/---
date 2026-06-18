@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block title %}{{ listing.title }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="detail-layout">
+  <div>
+    <a href="{{ listing.category.get_absolute_url }}" class="muted">{{ listing.category.name }}</a>
+    <h1 class="page-title" style="margin-top:6px;">{{ listing.title }}</h1>
+
+    {% if photos %}
+      <div class="photo-grid mb-2">
+        {% for photo in photos %}
+          <img src="{{ photo.image.url }}" data-lightbox="{{ photo.image.url }}" alt="{{ listing.title }}">
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="card" style="padding:18px;">
+      <div class="section-title">Описание</div>
+      <div style="white-space:pre-wrap;">{{ listing.description }}</div>
+    </div>
+  </div>
+
+  <aside class="card owner-box">
+    <a href="{% url 'accounts:user_profile' listing.author.pk %}" class="owner-row">
+      {% include 'partials/avatar.html' with u=listing.author size='' %}
+      <strong>{{ listing.author.display_name }}</strong>
+    </a>
+
+    {% if is_admin_view %}
+      <div class="muted mb-2">Статус: <strong>{{ listing.get_status_display }}</strong></div>
+    {% endif %}
+
+    {% if can_see_date and listing.published_at %}
+      <div class="muted mb-2">Опубликован: {{ listing.published_at|date:'d/m/y. H:i' }}</div>
+    {% endif %}
+
+    {% if is_owner %}
+      {# Своё объявление #}
+      <form method="post" action="{% url 'listings:toggle_favorite' listing.pk %}" data-favorite-form>
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline">
+          {% if is_favorite %}Убрать из избранного{% else %}Добавить в избранное{% endif %}
+        </button>
+      </form>
+      <a href="{% url 'listings:edit' listing.pk %}" class="btn btn-outline">Редактировать</a>
+      <button type="button" class="btn btn-danger" data-modal-open="delete-modal">Удалить</button>
+
+    {% elif user.is_authenticated %}
+      {# Чужое объявление (в т.ч. админ) #}
+      <a href="{% url 'messaging:start_with' listing.author.pk %}" class="btn btn-primary">Отправить сообщение</a>
+      <form method="post" action="{% url 'listings:toggle_favorite' listing.pk %}" data-favorite-form>
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline">
+          {% if is_favorite %}Убрать из избранного{% else %}Добавить в избранное{% endif %}
+        </button>
+      </form>
+      {% if is_admin_view %}
+        <a href="{% url 'listings:edit' listing.pk %}" class="btn btn-outline">Редактировать</a>
+        <button type="button" class="btn btn-danger" data-modal-open="delete-modal">Удалить</button>
+      {% else %}
+        <button type="button" class="btn btn-outline" data-modal-open="complaint-modal">Жалоба</button>
+      {% endif %}
+
+    {% else %}
+      {# Гость #}
+      <button type="button" class="btn btn-primary" data-modal-open="auth-modal">Отправить сообщение</button>
+      <button type="button" class="btn btn-outline" data-modal-open="auth-modal">Добавить в избранное</button>
+      <button type="button" class="btn btn-outline" data-modal-open="auth-modal">Жалоба</button>
+    {% endif %}
+  </aside>
+</div>
+
+{% if is_owner or is_admin_view %}
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal text-center">
+    <h3>Вы действительно хотите удалить Объявление ({{ listing.title }})?</h3>
+    <div class="modal-actions" style="justify-content:center">
+      <form method="post" action="{% url 'listings:delete' listing.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Да</button>
+      </form>
+      <button type="button" class="btn btn-outline" data-modal-close>Нет</button>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% if user.is_authenticated and not is_owner and not is_admin_view %}
+<div class="modal-overlay" id="complaint-modal">
+  <div class="modal">
+    <button type="button" class="modal-close" data-modal-close>&times;</button>
+    <h3>Жалоба</h3>
+    <form method="post" action="{% url 'listings:complaint' listing.pk %}" id="complaint-form">
+      {% csrf_token %}
+      <div class="form-row">
+        <label>Введите текст Жалобы:</label>
+        <textarea name="text" class="form-control"></textarea>
+        <div class="field-error"></div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" data-modal-close>Отменить</button>
+        <button type="submit" class="btn btn-primary">Отправить</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

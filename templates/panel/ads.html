@@ -1,0 +1,39 @@
+{% extends 'panel/base.html' %}
+
+{% block panel %}
+<h2 class="section-title">{{ title }} ({{ page_obj.paginator.count }})</h2>
+
+{% if page_obj.object_list %}
+  <div class="grid">
+    {% for listing in page_obj %}
+      <div class="listing-card">
+        <a href="{% url 'listings:detail' listing.pk %}">
+          {% with cover=listing.cover %}
+            {% if cover %}<img src="{{ cover.image.url }}" class="thumb" alt="">{% else %}<div class="thumb empty">Нет фото</div>{% endif %}
+          {% endwith %}
+        </a>
+        <div class="body">
+          <a href="{% url 'listings:detail' listing.pk %}" class="title">{{ listing.title }}</a>
+          <div class="meta">{{ listing.author.display_name }} · {{ listing.category.name }}</div>
+          <div class="meta">{{ listing.created_at|date:'d/m/y H:i' }}</div>
+          {% if section == 'queue' %}
+            <div style="display:flex;gap:6px;margin-top:8px;">
+              <form method="post" action="{% url 'panel:listing_approve' listing.pk %}">
+                {% csrf_token %}<input type="hidden" name="next" value="{% url 'panel:ads_queue' %}">
+                <button class="btn btn-green btn-sm">Опубликовать</button>
+              </form>
+              <form method="post" action="{% url 'panel:listing_reject' listing.pk %}">
+                {% csrf_token %}<input type="hidden" name="next" value="{% url 'panel:ads_queue' %}">
+                <button class="btn btn-danger btn-sm">Отклонить</button>
+              </form>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  {% include 'partials/pagination.html' %}
+{% else %}
+  <div class="empty-state">Пусто.</div>
+{% endif %}
+{% endblock %}

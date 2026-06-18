@@ -1,0 +1,32 @@
+{% extends 'panel/base.html' %}
+
+{% block panel %}
+<h2 class="section-title">Категории</h2>
+
+<form method="post" class="card mb-2" style="padding:16px;display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
+  {% csrf_token %}
+  <div style="flex:1;min-width:200px;">
+    <label style="font-weight:600;">Название</label>
+    <input type="text" name="name" class="form-control" value="{{ form.name.value|default:'' }}">
+    {% if form.name.errors %}<div class="field-error">{{ form.name.errors.0 }}</div>{% endif %}
+  </div>
+  <button type="submit" class="btn btn-primary">Сохранить</button>
+</form>
+
+<div class="card" style="overflow-x:auto;">
+  <table class="table">
+    <thead><tr><th>Название</th><th>Публикаций</th><th></th></tr></thead>
+    <tbody>
+      {% for c in categories %}
+        <tr>
+          <td><a href="{{ c.get_absolute_url }}">{{ c.name }}</a></td>
+          <td>{{ c.published_count }}</td>
+          <td><a href="{% url 'panel:category_edit' c.pk %}" class="btn btn-outline btn-sm">Редактировать</a></td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="3" class="empty-state">Категорий пока нет.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

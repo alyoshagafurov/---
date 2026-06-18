@@ -1,0 +1,17 @@
+{% extends 'panel/base.html' %}
+
+{% block panel %}
+<h2 class="section-title">Редактировать категорию</h2>
+<form method="post" class="card" style="padding:16px;max-width:440px;">
+  {% csrf_token %}
+  <div class="form-row">
+    <label>Название</label>
+    <input type="text" name="name" class="form-control" value="{{ form.name.value|default:category.name }}">
+    {% if form.name.errors %}<div class="field-error">{{ form.name.errors.0 }}</div>{% endif %}
+  </div>
+  <div class="modal-actions">
+    <a href="{% url 'panel:categories' %}" class="btn btn-outline">Отмена</a>
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+  </div>
+</form>
+{% endblock %}

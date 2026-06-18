@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Регистрация — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<form method="post" id="register-form" class="form-card card" novalidate>
+  {% csrf_token %}
+  <h1 class="page-title text-center">Регистрация</h1>
+
+  {% if form.non_field_errors %}
+    <div class="alert alert-error">{{ form.non_field_errors.0 }}</div>
+  {% endif %}
+
+  <div class="form-row">
+    <label>Имя на сайте</label>
+    <div class="form-hint">Минимум 1 символ. Максимум 15. Только буквы и цифры.</div>
+    <input type="text" name="display_name" class="form-control" maxlength="15"
+           value="{{ form.display_name.value|default:'' }}" autofocus>
+    {% if form.display_name.errors %}<div class="field-error">{{ form.display_name.errors.0 }}</div>{% endif %}
+  </div>
+
+  <div class="form-row">
+    <label>Email</label>
+    <input type="text" name="email" class="form-control"
+           value="{{ form.email.value|default:'' }}">
+    {% if form.email.errors %}<div class="field-error">{{ form.email.errors.0 }}</div>{% endif %}
+  </div>
+
+  <div class="form-row">
+    <label>Пароль</label>
+    <div class="form-hint">Минимум 6 символов. Максимум 15 символов.</div>
+    <input type="password" name="password1" class="form-control" maxlength="15">
+    {% if form.password1.errors %}<div class="field-error">{{ form.password1.errors.0 }}</div>{% endif %}
+  </div>
+
+  <div class="form-row">
+    <label>Подтвердить пароль</label>
+    <input type="password" name="password2" class="form-control" maxlength="15" disabled>
+    {% if form.password2.errors %}<div class="field-error">{{ form.password2.errors.0 }}</div>{% endif %}
+  </div>
+
+  <div class="form-row">
+    <label class="checkbox-row">
+      <input type="checkbox" name="terms">
+      <span>С правилами ознакомлен (<a href="{% url 'core:rules' %}" target="_blank">Правила</a>)</span>
+    </label>
+    {% if form.terms.errors %}<div class="field-error">{{ form.terms.errors.0 }}</div>{% endif %}
+  </div>
+
+  <button type="submit" class="btn btn-primary btn-block disabled" disabled>Регистрация</button>
+
+  <p class="text-center mt-2 muted">
+    Уже зарегистрированы? <a href="{% url 'accounts:login' %}">Вход</a>
+  </p>
+</form>
+{% endblock %}

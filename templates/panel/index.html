@@ -1,0 +1,12 @@
+{% extends 'panel/base.html' %}
+
+{% block panel %}
+<div class="cat-grid">
+  <a href="{% url 'panel:users' %}" class="cat-card"><span class="cat-name">{{ counts.users }}</span><span class="cat-count">Пользователи</span></a>
+  <a href="{% url 'panel:ads_all' %}" class="cat-card"><span class="cat-name">{{ counts.published }}</span><span class="cat-count">Все объявления</span></a>
+  <a href="{% url 'panel:ads_queue' %}" class="cat-card"><span class="cat-name">{{ counts.queue }}</span><span class="cat-count">В очереди</span></a>
+  <a href="{% url 'panel:ads_deleted' %}" class="cat-card"><span class="cat-name">{{ counts.deleted }}</span><span class="cat-count">Удалённые</span></a>
+  <a href="{% url 'panel:complaints' %}" class="cat-card"><span class="cat-name">{{ counts.complaints }}</span><span class="cat-count">Жалобы</span></a>
+  <a href="{% url 'panel:categories' %}" class="cat-card"><span class="cat-name">{{ counts.categories }}</span><span class="cat-count">Категории</span></a>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Сообщения — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Сообщения <span class="muted" style="font-size:16px;">({{ dialogs_total }})</span></h1>
+
+{% if page_obj.object_list %}
+  <div class="card dialog-list">
+    {% for item in page_obj %}
+      <a href="{% url 'messaging:conversation' item.conversation.pk %}" class="dialog-item">
+        {% include 'partials/avatar.html' with u=item.other size='' %}
+        <div class="d-main">
+          <div class="d-name">{{ item.other.display_name }}</div>
+          {% if item.last %}<div class="d-last">{{ item.last.text|truncatechars:60 }}</div>{% endif %}
+        </div>
+        <div style="text-align:right;">
+          {% if item.last %}<div class="d-date">{{ item.last.created_at|date:'d/m/y' }}</div>{% endif %}
+          {% if item.unread %}<span class="badge">{{ item.unread }}</span>{% endif %}
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+  {% include 'partials/pagination.html' %}
+{% else %}
+  <div class="empty-state">У вас пока нет диалогов.</div>
+{% endif %}
+{% endblock %}

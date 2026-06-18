@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Объявление отправлено — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="form-card card text-center">
+  <h1 class="page-title">Готово</h1>
+  <div class="alert alert-info">Объявление будет Опубликовано после проверки Администрацией.</div>
+  <a href="{% url 'accounts:my_account' %}?tab=queue" class="btn btn-primary btn-block">Мои объявления в очереди</a>
+  <a href="{% url 'core:home' %}" class="btn btn-outline btn-block mt-1">На главную</a>
+</div>
+{% endblock %}

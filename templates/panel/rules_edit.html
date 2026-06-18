@@ -1,0 +1,14 @@
+{% extends 'panel/base.html' %}
+
+{% block panel %}
+<h2 class="section-title">Правила</h2>
+{% if saved %}<div class="alert alert-success">Сохранено.</div>{% endif %}
+<form method="post" class="card" style="padding:16px;">
+  {% csrf_token %}
+  <div class="form-row">
+    <label>Текст правил</label>
+    {{ form.rules_text }}
+  </div>
+  <button type="submit" class="btn btn-primary">Сохранить</button>
+</form>
+{% endblock %}

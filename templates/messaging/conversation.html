@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Диалог с {{ other.display_name }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<a href="{% url 'messaging:inbox' %}" class="muted">← К диалогам</a>
+
+<div class="card chat mt-1">
+  <div class="chat-head">
+    <a href="{% url 'accounts:user_profile' other.pk %}" style="display:flex;align-items:center;gap:10px;">
+      {% include 'partials/avatar.html' with u=other size='' %}
+      <strong>{{ other.display_name }}</strong>
+    </a>
+    {% if other.is_online %}
+      <span class="status-online">Online</span>
+    {% else %}
+      <span class="status-offline">Offline{% if user.is_staff and other.last_seen %} · {{ other.last_seen|date:'d/m/y H:i' }}{% endif %}</span>
+    {% endif %}
+  </div>
+
+  <div class="chat-body" id="chat-body">
+    {% for msg in page_obj %}
+      <div class="msg {% if msg.sender_id == user.pk %}mine{% else %}theirs{% endif %}">
+        {{ msg.text }}
+        <span class="time">{{ msg.created_at|date:'d/m/y H:i' }}</span>
+      </div>
+    {% empty %}
+      <div class="empty-state">Сообщений пока нет. Напишите первым.</div>
+    {% endfor %}
+  </div>
+
+  <form method="post" class="chat-form">
+    {% csrf_token %}
+    <textarea name="text" class="form-control" placeholder="Сообщение..." required></textarea>
+    <button type="submit" class="btn btn-primary">Отправить</button>
+  </form>
+</div>
+
+{% include 'partials/pagination.html' %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  var cb = document.getElementById('chat-body');
+  if (cb) cb.scrollTop = cb.scrollHeight;
+</script>
+{% endblock %}

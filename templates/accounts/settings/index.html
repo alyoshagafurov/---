@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Настройки — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Настройки</h1>
+<div class="cat-grid">
+  <a href="{% url 'accounts:settings_avatar' %}" class="cat-card"><span class="cat-name">Аватарка</span></a>
+  <a href="{% url 'accounts:settings_name' %}" class="cat-card"><span class="cat-name">Изменить имя на сайте</span></a>
+  <a href="{% url 'accounts:settings_password' %}" class="cat-card"><span class="cat-name">Изменить пароль</span></a>
+  <a href="{% url 'accounts:settings_email' %}" class="cat-card"><span class="cat-name">Изменить почту</span></a>
+</div>
+{% endblock %}

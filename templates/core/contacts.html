@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Контакты — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="card form-card wide" style="margin:0 auto;">
+  <h1 class="page-title">Контакты</h1>
+  <div style="white-space:pre-wrap;">{{ settings.contacts_text }}</div>
+  <div class="mt-2">
+    {% if user.is_authenticated %}
+      <a href="{% url 'messaging:contact_admin' %}" class="btn btn-primary">Связаться с администрацией</a>
+    {% else %}
+      <button type="button" class="btn btn-primary" data-modal-open="auth-modal">Связаться с администрацией</button>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

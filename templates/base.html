@@ -1,0 +1,106 @@
+{% load static %}<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="{% url 'core:home' %}" class="logo">{{ SITE_NAME }}</a>
+
+    {% if user.is_authenticated %}
+      <nav class="header-nav">
+        <a href="{% url 'messaging:inbox' %}" class="header-link">
+          Сообщения
+          {% if unread_messages %}<span class="badge">{{ unread_messages }}</span>{% endif %}
+        </a>
+        <a href="{% url 'accounts:favorites' %}" class="header-link">Избранное</a>
+        <a href="{% url 'accounts:settings' %}" class="header-link">Настройки</a>
+        {% if user.is_staff %}<a href="{% url 'panel:index' %}" class="header-link">Админка</a>{% endif %}
+        <a href="{% url 'accounts:my_account' %}" class="header-account">
+          {% include 'partials/avatar.html' with u=user size='' %}
+          <span class="acc-info">
+            <span class="acc-name">{{ user.display_name }}</span>
+            <button type="button" class="logout-link" data-modal-open="logout-modal">Выход</button>
+          </span>
+        </a>
+      </nav>
+    {% else %}
+      <nav class="header-nav">
+        <a href="{% url 'accounts:register' %}" class="btn btn-outline btn-sm">Регистрация</a>
+        <a href="{% url 'accounts:login' %}" class="btn btn-primary btn-sm">Вход</a>
+      </nav>
+    {% endif %}
+  </div>
+</header>
+
+<div class="action-bar">
+  <div class="container">
+    <a href="{% url 'core:home' %}">Объявления</a>
+    {% if user.is_authenticated %}
+      <a href="{% url 'listings:create' %}" class="primary">Добавить объявление</a>
+    {% else %}
+      <button type="button" class="primary" data-modal-open="auth-modal">Добавить объявление</button>
+    {% endif %}
+  </div>
+</div>
+
+<main>
+  <div class="container">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+    {% block content %}{% endblock %}
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <span>{{ footer_start|default:'2021' }}–{% now 'Y' %}.</span>
+    <a href="{% url 'core:rules' %}">Правила</a>
+    <a href="{% url 'core:contacts' %}">Контакты</a>
+  </div>
+</footer>
+
+<!-- Модальное окно подтверждения выхода -->
+<div class="modal-overlay" id="logout-modal">
+  <div class="modal text-center">
+    <h3>Вы действительно хотите выйти?</h3>
+    <div class="modal-actions" style="justify-content:center">
+      <form method="post" action="{% url 'accounts:logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Да</button>
+      </form>
+      <button type="button" class="btn btn-outline" data-modal-close>Нет</button>
+    </div>
+  </div>
+</div>
+
+<!-- Модальное окно для гостей -->
+<div class="modal-overlay" id="auth-modal">
+  <div class="modal text-center">
+    <button type="button" class="modal-close" data-modal-close>&times;</button>
+    <h3>Войдите или зарегистрируйтесь</h3>
+    <div class="modal-actions" style="justify-content:center">
+      <a href="{% url 'accounts:register' %}" class="btn btn-outline">Регистрация</a>
+      <a href="{% url 'accounts:login' %}" class="btn btn-primary">Вход</a>
+    </div>
+  </div>
+</div>
+
+<!-- Лайтбокс -->
+<div class="lightbox" id="lightbox">
+  <button type="button" class="modal-close" data-modal-close>&times;</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script src="{% static 'js/app.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

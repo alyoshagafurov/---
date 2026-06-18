@@ -1,0 +1,26 @@
+{% extends 'panel/base.html' %}
+
+{% block panel %}
+<h2 class="section-title">Жалобы на объявления ({{ page_obj.paginator.count }})</h2>
+
+{% if page_obj.object_list %}
+  {% for c in page_obj %}
+    <div class="card mb-2" style="padding:16px;display:flex;gap:14px;align-items:flex-start;">
+      <a href="{% url 'listings:detail' c.listing.pk %}">
+        {% with cover=c.listing.cover %}
+          {% if cover %}<img src="{{ cover.image.url }}" style="width:90px;height:90px;object-fit:cover;border-radius:8px;" alt="">{% endif %}
+        {% endwith %}
+      </a>
+      <div style="flex:1;">
+        <a href="{% url 'listings:detail' c.listing.pk %}"><strong>{{ c.listing.title }}</strong></a>
+        <div class="muted">Жалобу подал: <a href="{% url 'accounts:user_profile' c.reporter.pk %}">{{ c.reporter.display_name }}</a></div>
+        <div class="muted">Добавлена: {{ c.created_at|date:'d/m/y. H:i' }}</div>
+        <div class="mt-1"><strong>Текст:</strong><br>{{ c.text }}</div>
+      </div>
+    </div>
+  {% endfor %}
+  {% include 'partials/pagination.html' %}
+{% else %}
+  <div class="empty-state">Жалоб нет.</div>
+{% endif %}
+{% endblock %}
