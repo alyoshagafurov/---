@@ -37,6 +37,15 @@ CSRF_TRUSTED_ORIGINS = [
     o for o in env("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if o
 ]
 
+# Railway автоматически передаёт публичный домен — добавляем его в хосты/CSRF.
+_railway_domain = env("RAILWAY_PUBLIC_DOMAIN")
+if _railway_domain:
+    if _railway_domain not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(_railway_domain)
+    origin = f"https://{_railway_domain}"
+    if origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(origin)
+
 
 # --- Приложения -------------------------------------------------------------
 
@@ -57,6 +66,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    # Отдача статики в продакшене (CSS/JS) без отдельного веб-сервера.
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -89,12 +100,17 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 
 # --- База данных ------------------------------------------------------------
+# По умолчанию SQLite (локально). Если задан DATABASE_URL (например, на Railway
+# с подключённым PostgreSQL) — используем его, чтобы данные сохранялись.
+
+import dj_database_url  # noqa: E402
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    "default": dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 }
 
 
@@ -129,7 +145,20 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = "media/"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_ROOT = env("MEDIA_ROOT", BASE_DIR / "media")
+
+# В продакшене статику отдаёт WhiteNoise (со сжатием и хешированием имён).
+# В режиме отладки — стандартное хранилище, чтобы не требовался collectstatic.
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {
+        "BACKEND": (
+            "django.contrib.staticfiles.storage.StaticFilesStorage"
+            if DEBUG
+            else "whitenoise.storage.CompressedManifestStaticFilesStorage"
+        )
+    },
+}
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
