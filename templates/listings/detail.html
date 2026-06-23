@@ -31,8 +31,11 @@
       <div class="muted mb-2">Статус: <strong>{{ listing.get_status_display }}</strong></div>
     {% endif %}
 
-    {% if can_see_date and listing.published_at %}
-      <div class="muted mb-2">Опубликован: {{ listing.published_at|date:'d/m/y. H:i' }}</div>
+    {% if can_see_date %}
+      <div class="muted mb-2">Создано: {{ listing.created_at|date:'d/m/y H:i' }}</div>
+      {% if listing.published_at %}
+        <div class="muted mb-2">Опубликовано: {{ listing.published_at|date:'d/m/y H:i' }}</div>
+      {% endif %}
     {% endif %}
 
     {% if is_owner %}

@@ -3,27 +3,34 @@
 {% block title %}{{ SITE_NAME }} — публикации{% endblock %}
 
 {% block content %}
-<h1 class="page-title">Категории</h1>
+<div class="home-layout">
+  <aside class="home-sidebar">
+    <h2 class="section-title">Категории</h2>
+    {% if categories %}
+      <div class="home-cat-list">
+        {% for category in categories %}
+          <a href="{{ category.get_absolute_url }}" class="cat-card">
+            <span class="cat-name">{{ category.name }}</span>
+            <span class="cat-count">{{ category.published_count }} {{ category.published_count|ru_plural:"публикация,публикации,публикаций" }}</span>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">Категории пока не добавлены.</div>
+    {% endif %}
+  </aside>
 
-{% if categories %}
-  <div class="cat-grid">
-    {% for category in categories %}
-      <a href="{{ category.get_absolute_url }}" class="cat-card">
-        <span class="cat-name">{{ category.name }}</span>
-        <span class="cat-count">{{ category.published_count }} {{ category.published_count|ru_plural:"публикация,публикации,публикаций" }}</span>
-      </a>
-    {% endfor %}
-  </div>
-{% else %}
-  <div class="empty-state">Категории пока не добавлены.</div>
-{% endif %}
-
-{% if latest %}
-  <h2 class="section-title mt-3">Свежие публикации</h2>
-  <div class="grid">
-    {% for listing in latest %}
-      {% include 'partials/listing_card.html' with listing=listing %}
-    {% endfor %}
-  </div>
-{% endif %}
+  <section class="home-main">
+    <h2 class="section-title">Публикации</h2>
+    {% if listings %}
+      <div class="grid grid-4">
+        {% for listing in listings %}
+          {% include 'partials/listing_card.html' with listing=listing %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">Публикаций пока нет.</div>
+    {% endif %}
+  </section>
+</div>
 {% endblock %}

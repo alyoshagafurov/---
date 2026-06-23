@@ -6,21 +6,22 @@ from .models import SiteSettings
 
 
 def home(request):
-    """Главная страница: категории с публикациями."""
+    """Главная страница: категории слева, случайные публикации справа."""
     categories = (
         Category.objects.all()
         .prefetch_related("listings")
         .order_by("position", "name")
     )
-    latest = (
+    random_listings = (
         Listing.objects.filter(status=Listing.Status.PUBLISHED)
         .select_related("category")
-        .prefetch_related("photos")[:10]
+        .prefetch_related("photos")
+        .order_by("?")[:12]
     )
     return render(
         request,
         "core/home.html",
-        {"categories": categories, "latest": latest},
+        {"categories": categories, "listings": random_listings},
     )
 
 

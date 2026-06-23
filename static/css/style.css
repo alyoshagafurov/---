@@ -306,6 +306,23 @@ select.form-control { appearance: none;
 .cat-card .cat-name { font-weight: 700; color: var(--text); font-size: 16.5px; }
 .cat-card .cat-count { color: var(--muted); font-size: 13px; }
 
+/* --- Настройки (вертикальный список) -------------------------------------- */
+
+.settings-list { display: flex; flex-direction: column; gap: 12px; max-width: 470px; }
+
+/* --- Главная: категории слева, публикации справа -------------------------- */
+
+.home-layout { display: grid; grid-template-columns: 260px 1fr; gap: 28px; align-items: start; }
+@media (max-width: 880px) { .home-layout { grid-template-columns: 1fr; } }
+
+.home-sidebar { position: sticky; top: calc(var(--header-h) + 16px); }
+.home-cat-list { display: flex; flex-direction: column; gap: 10px; }
+
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 1040px) { .grid-4 { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 700px)  { .grid-4 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 340px)  { .grid-4 { grid-template-columns: 1fr; } }
+
 /* --- Профиль -------------------------------------------------------------- */
 
 .profile-head {
